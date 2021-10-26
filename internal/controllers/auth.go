@@ -38,15 +38,16 @@ func Auth(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name:    "token",
-		Value:   token,
-		Path:    "/",
-		Expires: exp,
+		Name:     "token",
+		Value:    token,
+		Path:     "/",
+		Expires:  exp,
+		HttpOnly: true,
 	})
 
 	config.Logger(r.URL.Path, http.StatusOK, "OK")
 	w.WriteHeader(http.StatusOK)
-	_, err = w.Write([]byte("OK"))
+	_, err = w.Write([]byte(config.Env.JwtPublic))
 	if err != nil {
 		fmt.Printf("Error writing response: %v\n", err)
 		return
@@ -61,7 +62,7 @@ func createToken(username string, expTimeFromNow time.Duration, path string) (to
 	exp := tm.Add(expTimeFromNow)
 
 	claims := &middleware.Claims{
-		Username: username,
+		Sub: username,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: exp.Unix(),
 			IssuedAt:  now.Unix(),

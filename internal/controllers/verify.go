@@ -36,7 +36,7 @@ func Verify(w http.ResponseWriter, r *http.Request) {
 
 	config.Logger(r.URL.Path, http.StatusOK, "OK")
 	w.WriteHeader(http.StatusOK)
-	_, err = w.Write([]byte(claims.Username))
+	_, err = w.Write([]byte(claims.Sub))
 	if err != nil {
 		fmt.Printf("Error writing response: %v\n", err)
 		return
